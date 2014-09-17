@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package us.justg.gus.quadrilateral;
 
 /**
- *
+ * Trapezoid
+ * A quadrilateral  with AT LEAST ONE set of parallel lines.
+ * 
  * @author hfs5022
  */
 public class Trapezoid extends Quadrilateral {
@@ -15,6 +11,11 @@ public class Trapezoid extends Quadrilateral {
     public Trapezoid(Point[] points) {
         super(points);
     }
+
+    public Trapezoid(Point trapezoidTL, Point trapezoidTR, Point trapezoidBR, Point trapezoidBL) {
+        super(trapezoidTL, trapezoidTR, trapezoidBR, trapezoidBL);
+    }
+    
     
     @Override
     public double calculateArea(){
@@ -22,33 +23,40 @@ public class Trapezoid extends Quadrilateral {
         Point[] points = super.getPoints();
         double a, b, h;
         
-        // First, we find which sides are parallel. 
-        
-        // If the seg 0 to 1 and 2 to 3 are parallel...
-        if( Point.slope(points[0],points[1]) == Point.slope(points[2],points[3])) {
-            
-            a = Point.calculateDistance(points[0], points[1]);
-            b = Point.calculateDistance(points[2], points[3]);
-            
-        }
-        
-        
-            
-        return 0;
+        Point[][] parallelSegments = this.findParallelSegments();
+        a = Point.calculateDistance(parallelSegments[0]);
+        b = Point.calculateDistance(parallelSegments[1]);
+        h = findAltitude();
+                    
+        return h*(a+b)/2;
     }
     
+    // Finding the altitude of parallel lines - i.e. the closest distance between them.
     public double findAltitude(){
         
         Point[][] parallelSegments = findParallelSegments();
         
+        double m = Point.calculateSlope(parallelSegments[0]);
+        double b1 = Point.calculateIntercept(parallelSegments[0]);
+        double b2 = Point.calculateIntercept(parallelSegments[1]);
+        
+        // The two terms in the altitude calculation eqn.
+        double t1 = (b1*m-b2*m)/(m*m+1);
+        double t2 = (b2-b1)/(m*m+1);
+        
+        return Math.sqrt( Math.pow(t1, 2) + Math.pow(t2, 2) );
+       
     }
     
+    // As this is function is for trapezoids, we assume there's only a single
+    // set of parallel segments. This function returns those segments.
     public Point[][] findParallelSegments(){
         
         Point[] points = super.getPoints();
-        Point[][] parallelSegments = null;
+        Point[][] parallelSegments = new Point[2][2];
         
-        if( Point.slope(points[0],points[1]) == Point.slope(points[2],points[3])) {
+        // If the first set is parallel, return them...
+        if( Point.calculateSlope(points[0],points[1]) == Point.calculateSlope(points[2],points[3])) {
             
             parallelSegments[0][0] = points[0];
             parallelSegments[0][1] = points[1];
@@ -56,6 +64,9 @@ public class Trapezoid extends Quadrilateral {
             parallelSegments[1][1] = points[2];
                         
         }
+        
+        // Else, the other set must be parallel.
+        // Note - we're ASSUMING this trapezoid is actually a trapezoid!
         else {
             
             parallelSegments[0][0] = points[0];

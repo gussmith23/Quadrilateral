@@ -1,13 +1,9 @@
 package us.justg.gus.quadrilateral;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
+ * Point
+ * A simple point object, with an x and y field and various static math funcs.
+ * 
  * @author hfs5022
  */
 public class Point {
@@ -19,6 +15,7 @@ public class Point {
         this.y = y;
     }
     
+    // Distance between two points.
     static double calculateDistance(Point pt1, Point pt2){
         
         double x = pt1.x - pt2.x;
@@ -27,13 +24,33 @@ public class Point {
         return Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2));
         
     }
+    
+    static double calculateDistance(Point[] pts){
         
-    static double slope(Point pt1, Point pt2){
+        return calculateDistance(pts[0], pts[1]);
+        
+    }
+    
+    // Slope of the line formed by two points.
+    static double calculateSlope(Point pt1, Point pt2){
         
         double deltaX = pt1.x - pt2.x;
         double deltaY = pt1.y - pt2.y;
         
         return deltaY/deltaX;
+    }
+    
+    static double calculateSlope(Point[] pts){
+        return calculateSlope(pts[0], pts[1]);
+    }
+    
+    // Intercept of the line formed by two points.
+    static double calculateIntercept(Point pt1, Point pt2){
+        return pt1.y - calculateSlope(pt1, pt2)*pt1.x;
+    }
+    
+    static double calculateIntercept(Point[] pts){
+        return calculateIntercept(pts[0], pts[1]);
     }
 
     public double getX() {
